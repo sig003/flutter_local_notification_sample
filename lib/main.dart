@@ -13,18 +13,22 @@ class FlutterLocalNotifications extends StatefulWidget {
 }
 
 class _FlutterLocalNotificationsState extends State<FlutterLocalNotifications> {
+  final NotificationHelper notificationHelper = NotificationHelper();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Local Notifications Sample'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            showNotification();
-          },
-          child: Text('Show Notification'),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Local Notifications Sample'),
+        ),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () async {
+              await notificationHelper.showNotification();
+            },
+            child: Text('Show Notification'),
+          ),
         ),
       ),
     );

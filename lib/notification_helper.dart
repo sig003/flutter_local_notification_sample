@@ -1,51 +1,72 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:math';
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+class NotificationHelper {
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late String uniqueChannelId;
 
-Future<void> initLocalNotifications() async {
-  AndroidInitializationSettings androidInitializationSettings =
-  const AndroidInitializationSettings('mipmap/ic_launcher');
+  NotificationHelper() {
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    initLocalNotifications();
+  }
 
-  DarwinInitializationSettings iosInitializationSettings =
-  const DarwinInitializationSettings(
-    requestAlertPermission: false,
-    requestBadgePermission: false,
-    requestSoundPermission: false,
-  );
+  Future<void> initLocalNotifications() async {
+    AndroidInitializationSettings androidInitializationSettings =
+    const AndroidInitializationSettings('mipmap/ic_launcher');
 
-  InitializationSettings initializationSettings = InitializationSettings(
-    android: androidInitializationSettings,
-    iOS: iosInitializationSettings,
-  );
+    DarwinInitializationSettings iosInitializationSettings =
+    const DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
 
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-}
+    InitializationSettings initializationSettings = InitializationSettings(
+      android: androidInitializationSettings,
+      iOS: iosInitializationSettings,
+    );
 
-Future<void> requestNotificationPermission() async {
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-      IOSFlutterLocalNotificationsPlugin>()
-      ?.requestPermissions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-}
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
 
-Future<void> showNotification() async {
-  const AndroidNotificationDetails androidNotificationDetails =
-  AndroidNotificationDetails('channel id', 'channel name',
+  Future<void> requestNotificationPermission() async {
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  Future<void> showNotification() async {
+    uniqueChannelId = generateUniqueId();
+    AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+      uniqueChannelId,
+      'channel name',
       channelDescription: 'channel description',
       importance: Importance.max,
       priority: Priority.max,
-      showWhen: false);
+      ticker: 'ticker',
+    );
 
-  const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: DarwinNotificationDetails(badgeNumber: 1));
+    NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+        iOS: DarwinNotificationDetails(badgeNumber: 1));
 
-  await flutterLocalNotificationsPlugin.show(
-      0, 'test title', 'test body', notificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'test title', 'test body', notificationDetails, payload: 'item x');
+  }
+
+  String generateUniqueId() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    final random = Random.secure();
+    final charLength = 8;
+
+    return List.generate(charLength,
+            (index) => chars[random.nextInt(chars.length)])
+        .join();
+  }
 }
