@@ -16,6 +16,18 @@ class _FlutterLocalNotificationsState extends State<FlutterLocalNotifications> {
   final NotificationHelper notificationHelper = NotificationHelper();
 
   @override
+  void initState() {
+    super.initState();
+    initializeNotifications();
+  }
+
+  Future<void> initializeNotifications() async {
+    // 알림 권한 요청
+    await notificationHelper.requestNotificationPermission();
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(

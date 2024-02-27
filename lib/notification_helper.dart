@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:math';
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationHelper {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -8,6 +9,7 @@ class NotificationHelper {
   NotificationHelper() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     initLocalNotifications();
+    requestPermissionHandler();
   }
 
   Future<void> initLocalNotifications() async {
@@ -28,6 +30,18 @@ class NotificationHelper {
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
+  Future<void> requestPermissionHandler() async {
+    // 알림 권한 요청
+    var status = await Permission.notification.request();
+
+    if (status.isGranted) {
+      // 알림 권한이 허용된 경우
+      print('Notification permission granted');
+    } else {
+      // 알림 권한이 거부된 경우
+      print('Notification permission denied');
+    }
+  }
 
   Future<void> requestNotificationPermission() async {
     await flutterLocalNotificationsPlugin
@@ -44,12 +58,11 @@ class NotificationHelper {
     uniqueChannelId = generateUniqueId();
     AndroidNotificationDetails androidNotificationDetails =
     AndroidNotificationDetails(
-      uniqueChannelId,
+      '1',
       'channel name',
       channelDescription: 'channel description',
       importance: Importance.max,
-      priority: Priority.max,
-      ticker: 'ticker',
+      priority: Priority.high
     );
 
     NotificationDetails notificationDetails = NotificationDetails(
@@ -57,7 +70,7 @@ class NotificationHelper {
         iOS: DarwinNotificationDetails(badgeNumber: 1));
 
     await flutterLocalNotificationsPlugin.show(
-        0, 'test title', 'test body', notificationDetails, payload: 'item x');
+        0, 'test title', 'test body', notificationDetails);
   }
 
   String generateUniqueId() {
