@@ -18,13 +18,6 @@ class _FlutterLocalNotificationsState extends State<FlutterLocalNotifications> {
   @override
   void initState() {
     super.initState();
-    initializeNotifications();
-  }
-
-  Future<void> initializeNotifications() async {
-    // 알림 권한 요청
-    await notificationHelper.requestNotificationPermission();
-
   }
 
   @override

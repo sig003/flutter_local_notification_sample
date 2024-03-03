@@ -10,6 +10,7 @@ class NotificationHelper {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     initLocalNotifications();
     requestPermissionHandler();
+    requestNotificationPermission();
   }
 
   Future<void> initLocalNotifications() async {
@@ -62,7 +63,11 @@ class NotificationHelper {
       'channel name',
       channelDescription: 'channel description',
       importance: Importance.max,
-      priority: Priority.high
+      priority: Priority.high,
+      enableLights: true,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('alert'),
+      enableVibration: true
     );
 
     NotificationDetails notificationDetails = NotificationDetails(
